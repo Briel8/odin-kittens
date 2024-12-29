@@ -1,0 +1,18 @@
+{% extends 'kittens/base.html' %}
+
+{% block title %}<title>{{ kitten.name }}</title>{% endblock %}
+{% block content %}
+  <ul>
+    {% if kitten %}
+      <div>Name: {{ kitten.name }}</div>
+      <div>Age: {{ kitten.age }}</div>
+      <div>Cuteness: {{ kitten.cuteness }}</div>
+      <div>Softness: {{ kitten.softness}}</div>
+      <br>
+      <a href="{% url 'kittens:edit' kitten.id %}">Edit Kitten</a>- 
+      <a href="{% url 'kittens:destroy' kitten.id %}">Delete Kitten</a>
+    {% else %}
+      <li>No kitten here</li>
+    {% endif %}
+  </ul>
+{% endblock %}
