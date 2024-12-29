@@ -1,5 +1,5 @@
 # ODIN kITTENS API APP
 
-This project is meant as an exercise for building a web application that communicates with the backend via API calls. So the backend or the controllers (views in this case) will not render an html page but return raw data to the page
+This project is meant to be an exercise for building a website that is both a normal HTML-producing back end AND an API that can be used to pull data from it.
 
 link[it goes here]
