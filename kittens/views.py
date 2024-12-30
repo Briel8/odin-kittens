@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.http import Http404
+from django.urls import reverse
+from django.contrib import messages
 from .models import Kitten
 from .forms import KittenCreationForm
 
@@ -42,7 +44,9 @@ def create(request):
     form = KittenCreationForm(request.POST)
     if form.is_valid():
         form.save()
+        messages.success(request, 'Kitten created successfully!')
         return redirect('kittens:index')
+    messages.error(request, 'An error occured!')
     return redirect('kittens:new')
 
 def edit(request, pk):
@@ -60,8 +64,11 @@ def update(request, pk):
     kitten = get_object_or_404(Kitten, id=pk)
     form = KittenCreationForm(request.POST, instance=kitten)
     if form.is_valid():
-        form.save()
-        return redirect('kittens:new')
+        kitten = form.save()
+        messages.success(request, 'Kitten Updated successfully!')
+        url = reverse('kittens:show', kwargs={'pk': kitten.id,})
+        return HttpResponseRedirect(url)
+    messages.error(request, 'An error occured!')
     return render(request, 'kittens/edit.html', {'form': form})
 
 def destroy(request, pk):
@@ -69,4 +76,5 @@ def destroy(request, pk):
     Destroys an existing Kitten.
     """
     Kitten.objects.get(pk=pk).delete()
+    messages.success(request, 'Kitten Deleted successfully!')
     return redirect('kittens:index')
