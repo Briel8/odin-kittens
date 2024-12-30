@@ -1,18 +1,32 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
+from django.http import Http404
 from .models import Kitten
 from .forms import KittenCreationForm
 
 def index(request):
+    """
+    Renders a page with kitten objects. Return a json object if an API request is made.
+    """
     kittens = Kitten.objects.all()
-    return render(request, 'kittens/index.html', {'kittens': kittens})
+    if request.headers.get('Accept') == 'application/json':             # API call is made
+        kittens = list(Kitten.objects.values())
+        return JsonResponse(kittens, safe=False)
+    return render(request, 'kittens/index.html', {'kittens': kittens})  
 
 def show(request, pk):
     """
     Renders a details page for a single kitten.
     """
-    kitten = get_object_or_404(Kitten, id=pk)
-    return render(request, 'kittens/show.html', {'kitten': kitten})
+    try:
+        kitten = get_object_or_404(Kitten, id=pk)
+        if request.headers.get('Accept') == 'application/json':              # API call is made
+            return JsonResponse({'id': kitten.id, 'name': kitten.name})
+        return render(request, 'kittens/show.html', {'kitten': kitten})     
+    except Kitten.DoesNotExist:
+        raise Http404('Kitten does not exist')
+
 
 def new(request):
     """
